@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { FlatList, View, AsyncStorage } from 'react-native';
-import { Container, Icon } from 'native-base';
+import {
+  FlatList, View, AsyncStorage, ImageBackground,
+} from 'react-native';
 import PersonFlatListItem from '../../components/FlatListItem/PersonFlatListItem';
 import ActBox from '../../components/ActBox/ActBox';
 import InsertPersonRow from '../../components/InsertRow/InserPersonRow';
 import { jsonToMap, mapToJson, mapKeys } from '../../util';
+
+const img = require('../../images/wooden-board-flip.jpg');
 
 export default class GroupScreen extends Component {
   // remove header from react-navigation
@@ -30,7 +33,6 @@ export default class GroupScreen extends Component {
         personList: value[1][1] != null ? jsonToMap(value[1][1]) : new Map([]),
       });
       this.sharedItems = value[2][1] != null ? JSON.parse(value[2][1]) : {};
-      console.log(this.sharedItems);
     })
     .catch(e => console.log('err (didMount)', e.message));
 
@@ -78,7 +80,7 @@ export default class GroupScreen extends Component {
   removeAct = (name, actName) => {
     const { personList, actList } = this.state;
 
-    // remove act from person TODO: add to utils
+    // remove act from person
     const personActs = personList.get(name).acts;
     const indexOfAct = personActs.indexOf(actName);
     personActs.splice(indexOfAct, 1);
@@ -130,9 +132,9 @@ export default class GroupScreen extends Component {
 
   render() {
     const { actList, personList } = this.state;
-    const { navigation } = this.props;
     return (
-      <Container
+      <ImageBackground
+        source={img}
         style={{
           flexDirection: 'column',
           flex: 1,
@@ -141,7 +143,7 @@ export default class GroupScreen extends Component {
         }}
       >
         <InsertPersonRow parentFlatList={this} style={{ backgroundColor: '#e83a53' }} />
-        <View style={{ flex: 0.6, marginTop: 12 }}>
+        <View style={{ flex: 0.7, marginTop: 12 }}>
           <FlatList
             data={mapKeys(personList).reverse()}
             renderItem={({ item }) => (
@@ -167,7 +169,7 @@ export default class GroupScreen extends Component {
                   alignSelf: 'center',
                   justifyContent: 'center',
                   margin: 1,
-                  marginTop: 4
+                  marginTop: 4,
                 }}
               >
                 <PersonFlatListItem
@@ -182,17 +184,7 @@ export default class GroupScreen extends Component {
             extraData={this.state}
           />
         </View>
-
-        <View style={{ flex: 0.1, flexDirection: 'row', justifyContent: 'center' }}>
-          <Icon
-            active
-            style={{ color: '#e01d50' }}
-            name="navigate-next"
-            type="MaterialIcons"
-            onPress={() => navigation.navigate('Transfers')}
-          />
-        </View>
-      </Container>
+      </ImageBackground>
     );
   }
 }

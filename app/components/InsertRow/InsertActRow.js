@@ -27,15 +27,12 @@ export default class InsertActRow extends Component {
     return (
       <View
         style={{
-          flex: 0.1,
           flexDirection: 'row',
           justifyContent: 'center',
           alignSelf: 'center',
-          marginBottom: 24,
-          marginTop: 7,
         }}
       >
-        <Item rounded style={{ flexDirection: 'row', height: 32, backgroundColor: '#63e091' }}>
+        <Item rounded style={{ flexDirection: 'row', height: 32, backgroundColor: '#607d8b' }}>
           <View style={{ height: 40, width: 50 }}>
             <Input
               maxLength={3}

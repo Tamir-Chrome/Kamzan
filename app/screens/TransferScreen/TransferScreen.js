@@ -1,8 +1,10 @@
 /* @flow */
 import React, { Component } from 'react';
-import { View, AsyncStorage, FlatList } from 'react-native';
+import { AsyncStorage, FlatList, ImageBackground } from 'react-native';
 import TransferItem from '../../components/FlatListItem/TransferItem';
 import { jsonToMap } from '../../util';
+
+const img = require('../../images/wooden-board.jpg');
 
 export default class TransferScreen extends Component {
   // remove header from react-navigation
@@ -95,7 +97,10 @@ export default class TransferScreen extends Component {
   render() {
     const { transfers } = this.state;
     return (
-      <View style={{ backgroundColor: '#e83a53' }}>
+      <ImageBackground
+        source={img}
+        style={{ flexDirection: 'column', flex: 1, justifyContent: 'flex-start' }}
+      >
         <FlatList
           style={{ marginTop: 7 }}
           data={transfers}
@@ -105,7 +110,7 @@ export default class TransferScreen extends Component {
           keyExtractor={(item, index) => JSON.stringify(index)}
           extraData={this.state}
         />
-      </View>
+      </ImageBackground>
     );
   }
 }

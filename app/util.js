@@ -1,4 +1,3 @@
-
 export function mapToJson(map) {
   return JSON.stringify([...map]);
 }
@@ -12,6 +11,5 @@ export function mapKeys(map) {
   map.forEach((v, k) => {
     keys.push(k);
   });
-  console.log(keys);
   return keys;
 }

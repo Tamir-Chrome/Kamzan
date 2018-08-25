@@ -19,7 +19,6 @@ export default class ActFlatListItem extends Component {
     const {
       name, item, parentFlatList, bgColor,
     } = this.props;
-    console.log(item);
     return (
       <View
         style={{
@@ -30,7 +29,10 @@ export default class ActFlatListItem extends Component {
           marginVertical: 3,
         }}
       >
-        <TouchableWithoutFeedback onPress={() => this.changeSharedItem(parentFlatList, name)}>
+        <TouchableWithoutFeedback
+          onPress={() => this.changeSharedItem(parentFlatList, name)}
+          onLongPress={() => parentFlatList.showPrompt(name)}
+        >
           <View>
             <Price price={item.price} act={name} bgColor={bgColor} />
           </View>
@@ -46,9 +48,9 @@ export default class ActFlatListItem extends Component {
             this.ActionSheet = ref;
           }}
           title="Choose action"
-          options={['Remove', 'Delete', 'cancel']}
-          cancelButtonIndex={2}
-          destructiveButtonIndex={1}
+          options={['Delete', 'cancel']}
+          cancelButtonIndex={1}
+          destructiveButtonIndex={0}
           onPress={(index) => {
             switch (index) {
               case 0:

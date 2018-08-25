@@ -25,7 +25,7 @@ export default class InsertPersonRow extends Component {
           marginTop: 7,
         }}
       >
-        <Item rounded style={{ flexDirection: 'row', height: 32, backgroundColor: '#63e091' }}>
+        <Item rounded style={{ flexDirection: 'row', height: 32, backgroundColor: '#607d8b' }}>
           <View style={{ height: 40, width: 100 }}>
             <Input
               maxLength={13}
