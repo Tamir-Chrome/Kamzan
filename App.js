@@ -1,14 +1,28 @@
 import React from 'react';
 import { TabNavigator } from 'react-navigation';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/lib/integration/react';
 import {
   Button, Text, Icon, Footer, FooterTab,
 } from 'native-base';
+import { persistor, store } from './app/store';
 
+import LoadingScreen from './app/screens/LoadingScreen/LoadingScreen';
 import ActListScreen from './app/screens/ActListScreen/ActListScreen';
 import GroupScreen from './app/screens/GroupScreen/GroupScreen';
 import TransferScreen from './app/screens/TransferScreen/TransferScreen';
 
-export default (App = TabNavigator(
+export const App = () => (
+  <Provider store={store}>
+    <PersistGate loading={<LoadingScreen />} persistor={persistor}>
+      <ActListScreen />
+    </PersistGate>
+  </Provider>
+);
+
+export default App;
+
+const AppScreen = TabNavigator(
   {
     Items: { screen: props => <ActListScreen {...props} /> },
     Groups: { screen: props => <GroupScreen {...props} /> },
@@ -21,7 +35,7 @@ export default (App = TabNavigator(
         <FooterTab style={{ backgroundColor: '#795548' }}>
           <Button
             vertical
-            backgroundColor={props.navigationState.index === 0 ? '#a1887f' : '#795548'}
+            backgroundColor={props.navigationState.index === 1 ? '#a1887f' : '#795548'}
             active={props.navigationState.index === 0}
             onPress={() => props.navigation.navigate('Items')}
           >
@@ -56,4 +70,4 @@ export default (App = TabNavigator(
       </Footer>
     ),
   },
-));
+);

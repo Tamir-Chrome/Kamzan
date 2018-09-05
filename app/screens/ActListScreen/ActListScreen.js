@@ -3,11 +3,15 @@ import {
   FlatList, View, AsyncStorage, ImageBackground,
 } from 'react-native';
 import { Icon } from 'native-base';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import InsertActRow from '../../components/InsertRow/InsertActRow';
 import ActFlatListItem from '../../components/FlatListItem/ActFlatListItem';
 import { jsonToMap, mapToJson, mapKeys } from '../../util';
 import EditValuePrompt from '../../components/Modals/EditValue';
+import * as Actions from '../../actions';
 
+const uuidv4 = require('uuid/v4');
 const img = require('../../images/wooden-board.jpg');
 
 /**
@@ -20,7 +24,7 @@ const img = require('../../images/wooden-board.jpg');
  * @field
  * actList is a map that stores the keys as the name of the act and value as the properties of it
  */
-export default class ActListScreen extends Component {
+class ActListScreen extends Component {
   // remove header from react-navigation
   static navigationOptions = {
     header: null,
@@ -36,6 +40,7 @@ export default class ActListScreen extends Component {
     // AsyncStorage.clear();
   }
 
+  /*
   componentDidMount = () => AsyncStorage.multiGet(['actList', 'personList', 'sharedItems'])
     .then((value) => {
       this.setState({
@@ -45,25 +50,13 @@ export default class ActListScreen extends Component {
       this.sharedItems = value[2][1] != null ? JSON.parse(value[2][1]) : {};
     })
     .catch(e => console.error('ActListScreen.js:componentDidMount:', e.message));
-
-  /*
-  componentDidUpdate = () => AsyncStorage.multiGet(['actList', 'personList', 'sharedItems'])
-    .then((value) => {
-      this.setState({
-        actList: value[0][1] != null ? jsonToMap(value[0][1]) : new Map([]),
-      });
-      this.personList = value[1][1] != null ? jsonToMap(value[1][1]) : new Map([]);
-      this.sharedItems = value[2][1] != null ? JSON.parse(value[2][1]) : {};
-    })
-    .catch(e => console.error('ActListScreen.js:componentDidUpdate:', e.message));
   */
-
   updateActList(newList) {
     this.setState({ actList: newList });
     AsyncStorage.setItem('actList', mapToJson(newList)).catch(e => console.error('ActListScreen.js:updateActList:', e.message));
   }
 
-  // TODO: implement deep delete
+
   deleteFromList(actName) {
     const { actList } = this.state;
     // remove act from every person
@@ -131,8 +124,11 @@ export default class ActListScreen extends Component {
   addToList(price, name) {
     const { actList } = this.state;
     if (price && name && !actList.has(name)) {
-      actList.set(name, { price, isShared: false });
-      this.updateActList(actList);
+      const { addAct } = this.props;
+      // v4 - random uuid - statisticly will not fuck up in my life time
+      const id = uuidv4();
+      addAct(id, name, price);
+      // dispatch({ type: 'ADD_ACT', id, item: { name, price, isShared: false } });
     }
   }
 
@@ -177,7 +173,7 @@ export default class ActListScreen extends Component {
   }
 
   render() {
-    const { actList } = this.state;
+    const { actList } = this.props;
     return (
       <ImageBackground source={img} style={{ flexDirection: 'column', flex: 1, justifyContent: 'flex-start' }}>
         <EditValuePrompt
@@ -215,7 +211,7 @@ export default class ActListScreen extends Component {
           data={mapKeys(actList).reverse()}
           renderItem={({ item }) => (
             <ActFlatListItem
-              name={item}
+              name={actList.get(item).name}
               item={actList.get(item)}
               parentFlatList={this}
               bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}
@@ -228,3 +224,15 @@ export default class ActListScreen extends Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    actList: new Map(state.actList),
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(Actions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActListScreen);
