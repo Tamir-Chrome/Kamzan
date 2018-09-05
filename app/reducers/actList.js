@@ -5,7 +5,7 @@ const actList = (state = [], action) => {
     case 'REMOVE_ACT': {
       // deep copy
       const newActList = JSON.parse(JSON.stringify(state));
-      newActList.splice(action.indexOfAct);
+      newActList.splice(action.indexOfAct, 1);
       return newActList;
     }
     default:

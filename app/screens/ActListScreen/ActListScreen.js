@@ -57,27 +57,10 @@ class ActListScreen extends Component {
   }
 
 
-  deleteFromList(actName) {
-    const { actList } = this.state;
-    // remove act from every person
-    this.personList.forEach((person) => {
-      const indexOfAct = person.acts.indexOf(actName);
-      if (indexOfAct !== -1) person.acts.splice(indexOfAct, 1);
-    });
-
-    // remove act from sharedItems
-    if (actList.get(actName).isShared) delete this.sharedItems[actName];
-
-    // remove from actList
-    actList.delete(actName);
-
-    // update data
-    this.setState({ actList });
-    AsyncStorage.multiSet([
-      ['actList', mapToJson(actList)],
-      ['personList', mapToJson(this.personList)],
-      ['sharedItems', JSON.stringify(this.sharedItems)],
-    ]).catch(e => console.error('ActListScreen.js:deleteFromList:', e.message));
+  deleteFromList(index, id) {
+    const { removeAct, actList } = this.props;
+    const { size } = actList;
+    removeAct(size - index - 1, id);
   }
 
   // only called if act name is change
@@ -122,7 +105,7 @@ class ActListScreen extends Component {
   }
 
   addToList(price, name) {
-    const { actList } = this.state;
+    const { actList } = this.props;
     if (price && name && !actList.has(name)) {
       const { addAct } = this.props;
       // v4 - random uuid - statisticly will not fuck up in my life time
@@ -209,9 +192,10 @@ class ActListScreen extends Component {
         <FlatList
           style={{ flex: 0.8 }}
           data={mapKeys(actList).reverse()}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <ActFlatListItem
-              name={actList.get(item).name}
+              id={item}
+              actIndex={index}
               item={actList.get(item)}
               parentFlatList={this}
               bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}

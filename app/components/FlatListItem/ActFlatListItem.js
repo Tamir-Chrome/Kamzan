@@ -17,7 +17,7 @@ export default class ActFlatListItem extends Component {
 
   render() {
     const {
-      name, item, parentFlatList, bgColor,
+      id, actIndex, item, parentFlatList, bgColor,
     } = this.props;
     return (
       <View
@@ -30,11 +30,11 @@ export default class ActFlatListItem extends Component {
         }}
       >
         <TouchableWithoutFeedback
-          onPress={() => this.changeSharedItem(parentFlatList, name)}
-          onLongPress={() => parentFlatList.showPrompt(name)}
+          onPress={() => this.changeSharedItem(parentFlatList, item.name)}
+          onLongPress={() => parentFlatList.showPrompt(item.name)}
         >
           <View>
-            <Price price={item.price} act={name} bgColor={bgColor} />
+            <Price price={item.price} act={item.name} bgColor={bgColor} />
           </View>
         </TouchableWithoutFeedback>
         <Icon
@@ -54,7 +54,7 @@ export default class ActFlatListItem extends Component {
           onPress={(index) => {
             switch (index) {
               case 0:
-                parentFlatList.deleteFromList(name);
+                parentFlatList.deleteFromList(actIndex, id);
                 break;
               default:
                 break;
