@@ -59,7 +59,7 @@ class ActListScreen extends Component {
 
   deleteFromList(index, id) {
     const { removeAct, actList } = this.props;
-    const { size } = actList;
+    const size = actList.length;
     removeAct(size - index - 1, id);
   }
 
@@ -105,8 +105,7 @@ class ActListScreen extends Component {
   }
 
   addToList(price, name) {
-    const { actList } = this.props;
-    if (price && name && !actList.has(name)) {
+    if (price && name) {
       const { addAct } = this.props;
       // v4 - random uuid - statisticly will not fuck up in my life time
       const id = uuidv4();
@@ -118,13 +117,8 @@ class ActListScreen extends Component {
   changeSharedItem(indexOfAct, id) {
     // check if item is used TODO: ADD ALERT
     const { changeShared, sharedItems, actList } = this.props;
-    const { size } = actList;
+    const size = actList.length;
     if (!(id in sharedItems)) changeShared(size - indexOfAct - 1);
-  }
-
-  hardReset() {
-    AsyncStorage.clear();
-    this.setState({ actList: new Map([]) });
   }
 
   showPrompt(actName) {
@@ -182,7 +176,9 @@ class ActListScreen extends Component {
               style={{ color: '#C11B0F' }}
               name="delete-forever"
               type="MaterialIcons"
-              onPress={() => this.hardReset()}
+              onPress={() => {
+                AsyncStorage.clear();
+              }}
             />
           </View>
           <View style={{ flex: 1 }}>
@@ -191,14 +187,14 @@ class ActListScreen extends Component {
         </View>
         <FlatList
           style={{ flex: 0.8 }}
-          data={mapKeys(actList).reverse()}
+          data={actList.slice().reverse()}
           renderItem={({ item, index }) => (
             <ActFlatListItem
-              id={item}
+              id={item[0]}
               actIndex={index}
-              item={actList.get(item)}
+              item={item[1]}
               parentFlatList={this}
-              bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}
+              bgColor={item[1].isShared ? '#eeffff' : '#bbdefb'}
             />
           )}
           keyExtractor={(item, index) => JSON.stringify(index)}
@@ -211,8 +207,8 @@ class ActListScreen extends Component {
 
 function mapStateToProps(state) {
   return {
-    actList: new Map(state.actList),
-    personList: new Map(state.personList),
+    actList: state.actList,
+    personList: state.personList,
     sharedItems: state.sharedItems,
   };
 }

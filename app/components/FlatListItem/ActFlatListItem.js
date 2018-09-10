@@ -23,10 +23,7 @@ export default class ActFlatListItem extends Component {
           marginVertical: 3,
         }}
       >
-        <TouchableWithoutFeedback
-          onPress={() => parentFlatList.changeSharedItem(actIndex, id)}
-          onLongPress={() => parentFlatList.showPrompt(item.name)}
-        >
+        <TouchableWithoutFeedback onPress={() => parentFlatList.changeSharedItem(actIndex, id)}>
           <View>
             <Price price={item.price} act={item.name} bgColor={bgColor} />
           </View>
