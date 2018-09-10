@@ -2,17 +2,22 @@ import React, { Component } from 'react';
 import {
   FlatList, View, AsyncStorage, ImageBackground,
 } from 'react-native';
+import { Icon } from 'native-base';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PersonFlatListItem from '../../components/FlatListItem/PersonFlatListItem';
 import ActBox from '../../components/ActBox/ActBox';
 import InsertPersonRow from '../../components/InsertRow/InserPersonRow';
 import { jsonToMap, mapToJson, mapKeys } from '../../util';
+import * as Actions from '../../actions';
 
-const img = require('../../images/wooden-board-flip.jpg');
+const img = require('../../images/wooden-board.jpg');
 
-export default class GroupScreen extends Component {
+class GroupScreen extends Component {
   // remove header from react-navigation
   static navigationOptions = {
     header: null,
+    tabBarIcon: <Icon name="group" type="MaterialIcons" style={{ color: 'white' }} />,
   };
 
   constructor(props) {
@@ -25,20 +30,6 @@ export default class GroupScreen extends Component {
     this.sharedItems = {};
     // AsyncStorage.clear();
   }
-
-  componentDidMount = () => AsyncStorage.multiGet(['actList', 'personList', 'sharedItems'])
-    .then((value) => {
-      this.setState({
-        actList: value[0][1] != null ? jsonToMap(value[0][1]) : new Map([]),
-        personList: value[1][1] != null ? jsonToMap(value[1][1]) : new Map([]),
-      });
-      this.sharedItems = value[2][1] != null ? JSON.parse(value[2][1]) : {};
-    })
-    .catch(e => console.log('err (didMount)', e.message));
-
-  setSelectedActName = (name) => {
-    this.selectedActName = name;
-  };
 
   // only for actList and personList
   updateMap = (newList, listName) => {
@@ -131,7 +122,7 @@ export default class GroupScreen extends Component {
   }
 
   render() {
-    const { actList, personList } = this.state;
+    const { actList, personList } = this.props;
     return (
       <ImageBackground
         source={img}
@@ -173,8 +164,7 @@ export default class GroupScreen extends Component {
                 }}
               >
                 <PersonFlatListItem
-                  price={actList.get(item).price}
-                  name={item}
+                  item={actList.get(item)}
                   parentFlatList={this}
                   bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}
                 />
@@ -188,3 +178,20 @@ export default class GroupScreen extends Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    actList: new Map(state.actList),
+    personList: new Map(state.personList),
+    sharedItems: state.sharedItems,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(Actions, dispatch);
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(GroupScreen);

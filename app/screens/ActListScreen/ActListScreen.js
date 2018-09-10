@@ -28,6 +28,7 @@ class ActListScreen extends Component {
   // remove header from react-navigation
   static navigationOptions = {
     header: null,
+    tabBarIcon: <Icon name="list" type="MaterialIcons" style={{ color: 'white' }} />,
   };
 
   constructor(props) {
@@ -55,7 +56,6 @@ class ActListScreen extends Component {
     this.setState({ actList: newList });
     AsyncStorage.setItem('actList', mapToJson(newList)).catch(e => console.error('ActListScreen.js:updateActList:', e.message));
   }
-
 
   deleteFromList(index, id) {
     const { removeAct, actList } = this.props;
@@ -115,14 +115,11 @@ class ActListScreen extends Component {
     }
   }
 
-  changeSharedItem(name) {
+  changeSharedItem(indexOfAct, id) {
     // check if item is used TODO: ADD ALERT
-    if (!(name in this.sharedItems)) {
-      const { actList } = this.state;
-      const item = actList.get(name);
-      item.isShared = !item.isShared;
-      this.updateActList(actList);
-    }
+    const { changeShared, sharedItems, actList } = this.props;
+    const { size } = actList;
+    if (!(id in sharedItems)) changeShared(size - indexOfAct - 1);
   }
 
   hardReset() {
@@ -158,7 +155,10 @@ class ActListScreen extends Component {
   render() {
     const { actList } = this.props;
     return (
-      <ImageBackground source={img} style={{ flexDirection: 'column', flex: 1, justifyContent: 'flex-start' }}>
+      <ImageBackground
+        source={img}
+        style={{ flexDirection: 'column', flex: 1, justifyContent: 'flex-start' }}
+      >
         <EditValuePrompt
           onRef={(ref) => {
             this.prompt = ref;
@@ -212,6 +212,8 @@ class ActListScreen extends Component {
 function mapStateToProps(state) {
   return {
     actList: new Map(state.actList),
+    personList: new Map(state.personList),
+    sharedItems: state.sharedItems,
   };
 }
 
@@ -219,4 +221,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Actions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActListScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ActListScreen);

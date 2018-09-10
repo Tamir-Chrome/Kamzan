@@ -1,6 +1,7 @@
 /* @flow */
 import React, { Component } from 'react';
 import { AsyncStorage, FlatList, ImageBackground } from 'react-native';
+import { Icon } from 'native-base';
 import TransferItem from '../../components/FlatListItem/TransferItem';
 import { jsonToMap } from '../../util';
 
@@ -10,6 +11,7 @@ export default class TransferScreen extends Component {
   // remove header from react-navigation
   static navigationOptions = {
     header: null,
+    tabBarIcon: <Icon name="compare-arrows" type="MaterialIcons" style={{ color: 'white' }} />,
   };
 
   constructor(props) {

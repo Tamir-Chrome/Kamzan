@@ -1,10 +1,7 @@
 import React from 'react';
-import { TabNavigator } from 'react-navigation';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import {
-  Button, Text, Icon, Footer, FooterTab,
-} from 'native-base';
 import { persistor, store } from './app/store';
 
 import LoadingScreen from './app/screens/LoadingScreen/LoadingScreen';
@@ -12,16 +9,32 @@ import ActListScreen from './app/screens/ActListScreen/ActListScreen';
 import GroupScreen from './app/screens/GroupScreen/GroupScreen';
 import TransferScreen from './app/screens/TransferScreen/TransferScreen';
 
+const TabNav = createMaterialBottomTabNavigator(
+  {
+    Items: ActListScreen,
+    Groups: GroupScreen,
+    Transfers: TransferScreen,
+  },
+  {
+    shifting: true,
+    labeled: true,
+    initialRouteName: 'Items',
+    activeTintColor: 'white',
+    inactiveTintColor: '#3e2465',
+    barStyle: { backgroundColor: '#607d8b' },
+  },
+);
+
 export const App = () => (
   <Provider store={store}>
     <PersistGate loading={<LoadingScreen />} persistor={persistor}>
-      <ActListScreen />
+      <TabNav />
     </PersistGate>
   </Provider>
 );
 
 export default App;
-
+/*
 const AppScreen = TabNavigator(
   {
     Items: { screen: props => <ActListScreen {...props} /> },
@@ -71,3 +84,4 @@ const AppScreen = TabNavigator(
     ),
   },
 );
+*/

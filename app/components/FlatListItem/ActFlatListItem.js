@@ -9,12 +9,6 @@ export default class ActFlatListItem extends Component {
     this.ActionSheet.show();
   };
 
-  changeSharedItem(parentFlatList, name) {
-    const { bgColor } = this.props;
-    this.props.bgColor = bgColor === '#63E091' ? '#59c959' : '#63E091';
-    parentFlatList.changeSharedItem(name);
-  }
-
   render() {
     const {
       id, actIndex, item, parentFlatList, bgColor,
@@ -30,7 +24,7 @@ export default class ActFlatListItem extends Component {
         }}
       >
         <TouchableWithoutFeedback
-          onPress={() => this.changeSharedItem(parentFlatList, item.name)}
+          onPress={() => parentFlatList.changeSharedItem(actIndex, id)}
           onLongPress={() => parentFlatList.showPrompt(item.name)}
         >
           <View>

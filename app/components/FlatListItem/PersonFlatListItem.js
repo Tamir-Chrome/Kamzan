@@ -9,17 +9,15 @@ export default class PersonFlatListItem extends Component {
   }
 
   render() {
-    const {
-      name, price, bgColor, parentFlatList,
-    } = this.props;
+    const { item, bgColor, parentFlatList } = this.props;
     return (
       <TouchableOpacity
         onPress={() => {
-          parentFlatList.setSelectedActName(name);
+          parentFlatList.setSelectedActName(item.name);
         }}
       >
         <View>
-          <Price price={price} act={name} bgColor={bgColor} />
+          <Price price={item.price} act={item.name} bgColor={bgColor} />
         </View>
       </TouchableOpacity>
     );

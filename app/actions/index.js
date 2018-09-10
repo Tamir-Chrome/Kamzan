@@ -9,3 +9,8 @@ export const removeAct = (indexOfAct, id) => ({
   indexOfAct,
   id,
 });
+
+export const changeShared = indexOfAct => ({
+  type: 'CHANGE_SHARED',
+  indexOfAct,
+});
