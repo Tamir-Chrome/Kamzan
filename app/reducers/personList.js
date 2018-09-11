@@ -1,4 +1,5 @@
 const personList = (state = [], action) => {
+  const newPersonList = JSON.parse(JSON.stringify(state));
   switch (action.type) {
     case 'REMOVE_ACT':
       return state.map((person) => {
@@ -13,10 +14,17 @@ const personList = (state = [], action) => {
         ];
       });
     case 'ADD_PERSON':
-      return {
-        ...state,
-        [action.id]: action.item,
-      };
+      return [
+        ...newPersonList,
+        [
+          action.id,
+          {
+            name: action.personName,
+            payed: action.payedAmount,
+            acts: [],
+          },
+        ],
+      ];
     case 'REMOVE_PERSON': {
       const newActList = { ...state };
       delete newActList[action.id];

@@ -53,7 +53,7 @@ export default class InsertPersonRow extends Component {
             style={{ color: '#e01d50', fontSize: 32 }}
             name="playlist-add"
             type="MaterialIcons"
-            onPress={() => parentFlatList.addToGroupList(name, payed)}
+            onPress={() => parentFlatList.addToPersonList(name, payed)}
           />
         </View>
       </View>

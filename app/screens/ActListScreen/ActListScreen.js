@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import InsertActRow from '../../components/InsertRow/InsertActRow';
 import ActFlatListItem from '../../components/FlatListItem/ActFlatListItem';
-import { jsonToMap, mapToJson, mapKeys } from '../../util';
+import { mapToJson } from '../../util';
 import EditValuePrompt from '../../components/Modals/EditValue';
 import * as Actions from '../../actions';
 
@@ -41,17 +41,6 @@ class ActListScreen extends Component {
     // AsyncStorage.clear();
   }
 
-  /*
-  componentDidMount = () => AsyncStorage.multiGet(['actList', 'personList', 'sharedItems'])
-    .then((value) => {
-      this.setState({
-        actList: value[0][1] != null ? jsonToMap(value[0][1]) : new Map([]),
-      });
-      this.personList = value[1][1] != null ? jsonToMap(value[1][1]) : new Map([]);
-      this.sharedItems = value[2][1] != null ? JSON.parse(value[2][1]) : {};
-    })
-    .catch(e => console.error('ActListScreen.js:componentDidMount:', e.message));
-  */
   updateActList(newList) {
     this.setState({ actList: newList });
     AsyncStorage.setItem('actList', mapToJson(newList)).catch(e => console.error('ActListScreen.js:updateActList:', e.message));
@@ -108,9 +97,9 @@ class ActListScreen extends Component {
     if (price && name) {
       const { addAct } = this.props;
       // v4 - random uuid - statisticly will not fuck up in my life time
-      const id = uuidv4();
-      addAct(id, name, price);
-      // dispatch({ type: 'ADD_ACT', id, item: { name, price, isShared: false } });
+      const actId = uuidv4();
+      addAct(actId, name, price);
+      // dispatch({ type: 'ADD_ACT', actId, item: { name, price, isShared: false } });
     }
   }
 

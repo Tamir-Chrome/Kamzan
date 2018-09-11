@@ -14,3 +14,10 @@ export const changeShared = indexOfAct => ({
   type: 'CHANGE_SHARED',
   indexOfAct,
 });
+
+export const addPerson = (id, personName, payedAmount) => ({
+  type: 'ADD_PERSON',
+  id,
+  personName,
+  payedAmount,
+});

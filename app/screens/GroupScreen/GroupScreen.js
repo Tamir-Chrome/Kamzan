@@ -8,9 +8,10 @@ import { bindActionCreators } from 'redux';
 import PersonFlatListItem from '../../components/FlatListItem/PersonFlatListItem';
 import ActBox from '../../components/ActBox/ActBox';
 import InsertPersonRow from '../../components/InsertRow/InserPersonRow';
-import { jsonToMap, mapToJson, mapKeys } from '../../util';
+import { mapToJson, mapKeys } from '../../util';
 import * as Actions from '../../actions';
 
+const uuidv4 = require('uuid/v4');
 const img = require('../../images/wooden-board.jpg');
 
 class GroupScreen extends Component {
@@ -23,12 +24,7 @@ class GroupScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      actList: new Map([]),
-      personList: new Map([]),
     };
-    this.selectedActName = '';
-    this.sharedItems = {};
-    // AsyncStorage.clear();
   }
 
   // only for actList and personList
@@ -113,11 +109,12 @@ class GroupScreen extends Component {
     AsyncStorage.setItem('sharedItems', JSON.stringify(this.sharedItems)).catch(e => console.log('err', e.message));
   }
 
-  addToGroupList(personName, payed) {
-    const { personList } = this.state;
+  addToPersonList(personName, payed) {
+    const { personList, addPerson } = this.props;
     if (payed && personName && !personList.has(personName)) {
-      personList.set(personName, { payed, acts: [] });
-      this.updateMap(personList, 'personList');
+      // v4 - random uuid - statisticly will not fuck up in my life time
+      const personId = uuidv4();
+      addPerson(personId, personName, payed);
     }
   }
 
@@ -139,9 +136,9 @@ class GroupScreen extends Component {
             data={mapKeys(personList).reverse()}
             renderItem={({ item }) => (
               <ActBox
-                data={personList.get(item)}
+                id={item}
+                person={personList.get(item)}
                 actList={actList}
-                name={item}
                 parentFlatList={this}
               />
             )}
