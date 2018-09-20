@@ -24,6 +24,8 @@ class GroupScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectedActs: [],
+      selectedActsIndexes: [],
     };
   }
 
@@ -33,34 +35,12 @@ class GroupScreen extends Component {
     AsyncStorage.setItem(listName, mapToJson(newList)).catch(e => console.log('err', e.message));
   };
 
-  addAct = (name) => {
-    if (this.selectedActName && name) {
-      const { personList, actList } = this.state;
-
-      // add act name to person
-      personList.get(name).acts.push(this.selectedActName);
-
-      // get data about select act
-      const item = actList.get(this.selectedActName);
-      const tempActName = this.selectedActName;
-      // add to shared item list
-      if (item.isShared) {
-        if (tempActName in this.sharedItems && this.sharedItems[tempActName].userCount >= 1) {
-          this.sharedItems[tempActName].userCount += 1;
-          item.price = Math.floor(
-            this.sharedItems[tempActName].price / this.sharedItems[tempActName].userCount,
-          );
-          // update actList
-          this.updateMap(actList, 'actList');
-        } else this.sharedItems[tempActName] = { price: item.price, userCount: 1 };
-
-        // update sharedItems
-        console.log(this.sharedItems);
-        AsyncStorage.setItem('sharedItems', JSON.stringify(this.sharedItems)).catch(e => console.log('err', e.message));
-      }
-
-      this.selectedActName = '';
-      this.updateMap(personList, 'personList');
+  addAct = (personIndex) => {
+    const { selectedActs, selectedActsIndexes } = this.state;
+    if (selectedActs.length !== 0) {
+      const { addActs } = this.props;
+      addActs(personIndex, selectedActs, selectedActsIndexes);
+      this.setState({ selectedActs: [], selectedActsIndexes: [] });
     }
   };
 
@@ -80,38 +60,30 @@ class GroupScreen extends Component {
     this.updateMap(personList, 'personList');
   };
 
-  deleteRowFromList = (name) => {
-    const { personList, actList } = this.state;
-    personList.get(name).acts.forEach((element) => {
-      const item = actList.get(element);
-      if (item.isShared) {
-        this.removeUser(element);
-      }
+  addSelectedAct(actId, actIndex) {
+    const { selectedActs, selectedActsIndexes } = this.state;
+    selectedActs.push(actId);
+    selectedActsIndexes.push(actIndex);
+    this.setState({ selectedActs, selectedActsIndexes });
+  }
+
+  removeFromPersonList(personIndex) {
+    const { removePerson, actList, personList } = this.props;
+
+    // convert the acts list of a person
+    // to a list of their indexes
+    const actsIndex = [];
+    const actKeys = mapKeys(actList);
+    personList[personIndex][1].acts.forEach((actId) => {
+      actsIndex.push(actKeys.indexOf(actId));
     });
-    personList.delete(name);
-    this.updateMap(personList, 'personList');
-  };
 
-  removeUser(actName) {
-    const { actList } = this.state;
-    const item = actList.get(actName);
-
-    if (this.sharedItems[actName].userCount <= 1) {
-      delete this.sharedItems[actName];
-    } else {
-      this.sharedItems[actName].userCount -= 1;
-      item.price = Math.floor(
-        this.sharedItems[actName].price / this.sharedItems[actName].userCount,
-      );
-      this.updateMap(actList, 'actList');
-    }
-    console.log(this.sharedItems);
-    AsyncStorage.setItem('sharedItems', JSON.stringify(this.sharedItems)).catch(e => console.log('err', e.message));
+    removePerson(personIndex, actsIndex);
   }
 
   addToPersonList(personName, payed) {
-    const { personList, addPerson } = this.props;
-    if (payed && personName && !personList.has(personName)) {
+    const { addPerson } = this.props;
+    if (payed && personName) {
       // v4 - random uuid - statisticly will not fuck up in my life time
       const personId = uuidv4();
       addPerson(personId, personName, payed);
@@ -133,11 +105,12 @@ class GroupScreen extends Component {
         <InsertPersonRow parentFlatList={this} style={{ backgroundColor: '#e83a53' }} />
         <View style={{ flex: 0.7, marginTop: 12 }}>
           <FlatList
-            data={mapKeys(personList).reverse()}
-            renderItem={({ item }) => (
+            data={personList.slice().reverse()}
+            renderItem={({ item, index }) => (
               <ActBox
-                id={item}
-                person={personList.get(item)}
+                id={item[0]}
+                person={item[1]}
+                personIndex={personList.length - index - 1}
                 actList={actList}
                 parentFlatList={this}
               />
@@ -151,7 +124,7 @@ class GroupScreen extends Component {
             data={mapKeys(actList)}
             horizontal={false}
             numColumns={3}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <View
                 style={{
                   alignSelf: 'center',
@@ -161,7 +134,9 @@ class GroupScreen extends Component {
                 }}
               >
                 <PersonFlatListItem
+                  id={item}
                   item={actList.get(item)}
+                  index={index}
                   parentFlatList={this}
                   bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}
                 />
@@ -179,8 +154,7 @@ class GroupScreen extends Component {
 function mapStateToProps(state) {
   return {
     actList: new Map(state.actList),
-    personList: new Map(state.personList),
-    sharedItems: state.sharedItems,
+    personList: state.personList,
   };
 }
 

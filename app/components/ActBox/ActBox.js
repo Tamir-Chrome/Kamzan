@@ -16,9 +16,10 @@ export default class ActBox extends Component {
 
   render() {
     const {
-      parentFlatList, id, person, actList,
+      parentFlatList, person, personIndex, actList,
     } = this.props;
-    console.log(person);
+
+    console.log('acts: ', person.acts);
     return (
       <View style={{ height: 115, flexDirection: 'column', marginVertical: 4 }}>
         <View
@@ -33,7 +34,7 @@ export default class ActBox extends Component {
         >
           <TouchableOpacity
             onPress={() => {
-              parentFlatList.addAct(person.name);
+              parentFlatList.addAct(personIndex);
             }}
           >
             <View style={{ flexDirection: 'row' }}>
@@ -49,7 +50,7 @@ export default class ActBox extends Component {
             name="close"
             type="EvilIcons"
             style={{ color: '#C11B0F' }}
-            onPress={() => parentFlatList.deleteRowFromList(person.name)}
+            onPress={() => parentFlatList.removeFromPersonList(personIndex)}
           />
         </View>
         <View
@@ -80,8 +81,13 @@ export default class ActBox extends Component {
                   }}
                 >
                   <Price
-                    price={actList.get(item).price}
-                    act={item}
+                    price={
+                      actList.get(item).isShared
+                        ? Math.round((actList.get(item).price / actList.get(item).users) * 100)
+                          / 100
+                        : actList.get(item).price
+                    }
+                    act={actList.get(item).name}
                     bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}
                   />
                 </TouchableOpacity>

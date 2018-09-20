@@ -1,35 +1,16 @@
 const personList = (state = [], action) => {
   const newPersonList = JSON.parse(JSON.stringify(state));
   switch (action.type) {
-    case 'REMOVE_ACT':
-      return state.map((person) => {
-        // take out deleted item
-        const newAct = [...person[1].acts].filter(item => item !== action.id);
-        return [
-          person[0],
-          {
-            ...person[1],
-            acts: newAct,
-          },
-        ];
-      });
     case 'ADD_PERSON':
-      return [
-        ...newPersonList,
-        [
-          action.id,
-          {
-            name: action.personName,
-            payed: action.payedAmount,
-            acts: [],
-          },
-        ],
-      ];
-    case 'REMOVE_PERSON': {
-      const newActList = { ...state };
-      delete newActList[action.id];
-      return newActList;
-    }
+      return [...newPersonList, [action.id, action.item]];
+    case 'REMOVE_PERSON':
+      newPersonList.splice(action.personIndex, 1);
+      return newPersonList;
+    case 'ADD_ACTS':
+      newPersonList[action.personIndex][1].acts = newPersonList[action.personIndex][1].acts.concat(
+        action.acts,
+      );
+      return newPersonList;
     default:
       return state;
   }

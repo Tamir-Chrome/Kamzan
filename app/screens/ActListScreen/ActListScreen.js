@@ -103,11 +103,11 @@ class ActListScreen extends Component {
     }
   }
 
-  changeSharedItem(indexOfAct, id) {
+  changeSharedItem(indexOfAct) {
     // check if item is used TODO: ADD ALERT
-    const { changeShared, sharedItems, actList } = this.props;
+    const { changeShared, actList } = this.props;
     const size = actList.length;
-    if (!(id in sharedItems)) changeShared(size - indexOfAct - 1);
+    changeShared(size - indexOfAct - 1);
   }
 
   showPrompt(actName) {
@@ -197,8 +197,6 @@ class ActListScreen extends Component {
 function mapStateToProps(state) {
   return {
     actList: state.actList,
-    personList: state.personList,
-    sharedItems: state.sharedItems,
   };
 }
 

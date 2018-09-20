@@ -9,11 +9,13 @@ export default class PersonFlatListItem extends Component {
   }
 
   render() {
-    const { item, bgColor, parentFlatList } = this.props;
+    const {
+      id, item, index, bgColor, parentFlatList,
+    } = this.props;
     return (
       <TouchableOpacity
         onPress={() => {
-          parentFlatList.setSelectedActName(item.name);
+          parentFlatList.addSelectedAct(id, index);
         }}
       >
         <View>

@@ -7,6 +7,16 @@ const actList = (state = [], action) => {
     case 'REMOVE_ACT':
       newActList.splice(action.indexOfAct, 1);
       return newActList;
+    case 'ADD_ACTS':
+      action.actsIndexes.forEach((actIndex) => {
+        newActList[actIndex][1].users += 1;
+      });
+      return newActList;
+    case 'REMOVE_PERSON':
+      action.actsIndexes.forEach((actIndex) => {
+        newActList[actIndex][1].users -= 1;
+      });
+      return newActList;
     case 'CHANGE_SHARED':
       newActList[action.indexOfAct][1].isShared = !newActList[action.indexOfAct][1].isShared;
       return newActList;
