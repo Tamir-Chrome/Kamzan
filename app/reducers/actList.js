@@ -20,6 +20,9 @@ const actList = (state = [], action) => {
     case 'CHANGE_SHARED':
       newActList[action.indexOfAct][1].isShared = !newActList[action.indexOfAct][1].isShared;
       return newActList;
+    case 'REMOVE_PERSON_ACT':
+      newActList[action.actIndex][1].users -= 1;
+      return newActList;
     default:
       return state;
   }

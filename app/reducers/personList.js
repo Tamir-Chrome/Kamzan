@@ -11,6 +11,9 @@ const personList = (state = [], action) => {
         action.acts,
       );
       return newPersonList;
+    case 'REMOVE_PERSON_ACT':
+      newPersonList[action.personIndex][1].acts.splice(action.personActIndex, 1);
+      return newPersonList;
     default:
       return state;
   }

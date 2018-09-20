@@ -44,20 +44,11 @@ class GroupScreen extends Component {
     }
   };
 
-  removeAct = (name, actName) => {
-    const { personList, actList } = this.state;
-
-    // remove act from person
-    const personActs = personList.get(name).acts;
-    const indexOfAct = personActs.indexOf(actName);
-    personActs.splice(indexOfAct, 1);
-
-    // remove from shared item list
-    if (actList.get(actName).isShared) {
-      this.removeUser(actName);
-    }
-
-    this.updateMap(personList, 'personList');
+  removeAct = (personIndex, actId, personActIndex) => {
+    const { actList, removePersonAct } = this.props;
+    const actsKeys = mapKeys(actList);
+    const actIndex = actsKeys.indexOf(actId);
+    removePersonAct(personIndex, actIndex, personActIndex);
   };
 
   addSelectedAct(actId, actIndex) {

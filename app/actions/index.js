@@ -42,3 +42,10 @@ export const addActs = (personIndex, acts, actsIndexes) => ({
   acts,
   actsIndexes,
 });
+
+export const removePersonAct = (personIndex, actIndex, personActIndex) => ({
+  type: 'REMOVE_PERSON_ACT',
+  personIndex,
+  personActIndex,
+  actIndex,
+});

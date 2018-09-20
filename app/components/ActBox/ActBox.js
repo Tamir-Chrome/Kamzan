@@ -66,7 +66,7 @@ export default class ActBox extends Component {
             data={person.acts}
             horizontal={false}
             numColumns={3}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <View
                 style={{
                   alignItems: 'baseline',
@@ -77,7 +77,7 @@ export default class ActBox extends Component {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    parentFlatList.removeAct(person.name, item);
+                    parentFlatList.removeAct(personIndex, item, index);
                   }}
                 >
                   <Price
