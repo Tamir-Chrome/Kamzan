@@ -1,13 +1,13 @@
 /* @flow */
 import React, { Component } from 'react';
-import { AsyncStorage, FlatList, ImageBackground } from 'react-native';
+import { FlatList, ImageBackground } from 'react-native';
 import { Icon } from 'native-base';
+import { connect } from 'react-redux';
 import TransferItem from '../../components/FlatListItem/TransferItem';
-import { jsonToMap } from '../../util';
 
 const img = require('../../images/wooden-board.jpg');
 
-export default class TransferScreen extends Component {
+class TransferScreen extends Component {
   // remove header from react-navigation
   static navigationOptions = {
     header: null,
@@ -20,22 +20,24 @@ export default class TransferScreen extends Component {
       transfers: [],
     };
 
-    this.tempPersonList = new Map([]);
-    this.tempActList = new Map([]);
-    this.sharedValueToAdd = {};
     this.oweList = [];
     this.payersList = [];
   }
 
-  componentDidMount = () => AsyncStorage.multiGet(['personList', 'actList'])
-    .then((value) => {
-      this.tempPersonList = value[0][1] != null ? jsonToMap(value[0][1]) : new Map([]);
-      this.tempActList = value[1][1] != null ? jsonToMap(value[1][1]) : new Map([]);
+  componentDidMount() {
+    const { navigation } = this.props;
+    navigation.addListener('willFocus', this.onFocus);
+  }
 
-      this.calcDiff();
-      this.calcTransfer();
-    })
-    .catch(e => console.log('err (didMount)', e.message));
+  componentWillUnmount() {
+    const { navigation } = this.props;
+    navigation.removeListener('willFocus', this.onFocus);
+  }
+
+  onFocus = () => {
+    this.calcDiff();
+    this.calcTransfer();
+  };
 
   /**
    * calculte diff
@@ -44,18 +46,23 @@ export default class TransferScreen extends Component {
    * @memberof TransferScreen
    */
   calcDiff() {
-    // run over each person (pun intended)
-    this.tempPersonList.forEach((person, name) => {
+    const { actList, personList } = this.props;
+    // run over each person (sike!)
+    personList.forEach((person) => {
       let priceSum = 0;
-      person.acts.forEach((item) => {
-        priceSum += parseInt(this.tempActList.get(item).price, 10);
+      person[1].acts.forEach((item) => {
+        const act = actList.get(item);
+
+        priceSum += parseFloat(
+          act.isShared ? Math.round((act.price / act.users) * 100) / 100 : act.price,
+          10,
+        );
       });
 
-      const diff = priceSum - parseInt(person.payed, 10);
-      console.log(name, diff);
+      const diff = priceSum - parseInt(person[1].payed, 10);
 
-      if (diff > 0) this.oweList.push([name, diff]);
-      else this.payersList.push([name, diff * -1]);
+      if (diff > 0) this.oweList.push([person[1].name, diff]);
+      else this.payersList.push([person[1].name, diff * -1]);
     });
 
     this.oweList.sort((a, b) => a[1] - b[1]);
@@ -117,4 +124,11 @@ export default class TransferScreen extends Component {
   }
 }
 
-module.exports = TransferScreen;
+function mapStateToProps(state) {
+  return {
+    actList: new Map(state.actList),
+    personList: state.personList,
+  };
+}
+
+export default connect(mapStateToProps)(TransferScreen);

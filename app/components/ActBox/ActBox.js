@@ -19,7 +19,6 @@ export default class ActBox extends Component {
       parentFlatList, person, personIndex, actList,
     } = this.props;
 
-    console.log('acts: ', person.acts);
     return (
       <View style={{ height: 115, flexDirection: 'column', marginVertical: 4 }}>
         <View

@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import {
-  FlatList, View, AsyncStorage, ImageBackground,
-} from 'react-native';
+import { FlatList, View, ImageBackground } from 'react-native';
 import { Icon } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PersonFlatListItem from '../../components/FlatListItem/PersonFlatListItem';
 import ActBox from '../../components/ActBox/ActBox';
 import InsertPersonRow from '../../components/InsertRow/InserPersonRow';
-import { mapToJson, mapKeys } from '../../util';
+import { mapKeys } from '../../util';
 import * as Actions from '../../actions';
 
 const uuidv4 = require('uuid/v4');
@@ -28,12 +26,6 @@ class GroupScreen extends Component {
       selectedActsIndexes: [],
     };
   }
-
-  // only for actList and personList
-  updateMap = (newList, listName) => {
-    this.setState({ [listName]: newList });
-    AsyncStorage.setItem(listName, mapToJson(newList)).catch(e => console.log('err', e.message));
-  };
 
   addAct = (personIndex) => {
     const { selectedActs, selectedActsIndexes } = this.state;
