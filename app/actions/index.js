@@ -9,10 +9,10 @@ export const addAct = (id, name, price) => ({
   },
 });
 
-export const removeAct = (indexOfAct, id) => ({
+export const removeAct = (indexOfAct, actId) => ({
   type: 'REMOVE_ACT',
   indexOfAct,
-  id,
+  actId,
 });
 
 export const changeShared = indexOfAct => ({
