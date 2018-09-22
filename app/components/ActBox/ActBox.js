@@ -1,8 +1,8 @@
 /* @flow */
 import React, { Component } from 'react';
-import { FlatList, View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Text, Icon } from 'native-base';
-import Price from '../Price/Price';
+import ActList from './ActList';
 
 export default class ActBox extends Component {
   static navigationOptions = {
@@ -11,24 +11,27 @@ export default class ActBox extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      collapse: true,
+    };
   }
 
   render() {
     const {
       parentFlatList, person, personIndex, actList,
     } = this.props;
-
+    const { collapse } = this.state;
     return (
-      <View style={{ height: 115, flexDirection: 'column', marginVertical: 4 }}>
+      <View style={{ flexDirection: 'column', marginVertical: 2 }}>
         <View
           style={{
-            flex: 0.2,
             flexDirection: 'row',
             justifyContent: 'space-between',
+            alignContent: 'center',
             backgroundColor: '#424242',
             borderTopEndRadius: 8,
             borderTopStartRadius: 8,
+            height: 23,
           }}
         >
           <TouchableOpacity
@@ -45,57 +48,31 @@ export default class ActBox extends Component {
               </Text>
             </View>
           </TouchableOpacity>
-          <Icon
-            name="close"
-            type="EvilIcons"
-            style={{ color: '#C11B0F' }}
-            onPress={() => parentFlatList.removeFromPersonList(personIndex)}
-          />
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            <Icon
+              name="minus"
+              type="EvilIcons"
+              style={{ color: '#009B9F' }}
+              onPress={() => {
+                this.setState({ collapse: !collapse });
+              }}
+            />
+            <Icon
+              name="close"
+              type="EvilIcons"
+              style={{ color: '#C11B0F' }}
+              onPress={() => parentFlatList.removeFromPersonList(personIndex)}
+            />
+          </View>
         </View>
-        <View
-          style={{
-            flex: 0.8,
-            backgroundColor: '#E0E0E0',
-            borderBottomEndRadius: 8,
-            borderBottomStartRadius: 8,
-          }}
-        >
-          <FlatList
-            style={{ marginLeft: 4, marginTop: 4 }}
-            data={person.acts}
-            horizontal={false}
-            numColumns={3}
-            renderItem={({ item, index }) => (
-              <View
-                style={{
-                  alignItems: 'baseline',
-                  justifyContent: 'center',
-                  margin: 1,
-                  height: 32,
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() => {
-                    parentFlatList.removeAct(personIndex, item, index);
-                  }}
-                >
-                  <Price
-                    price={
-                      actList.get(item).isShared
-                        ? Math.round((actList.get(item).price / actList.get(item).users) * 100)
-                          / 100
-                        : actList.get(item).price
-                    }
-                    act={actList.get(item).name}
-                    bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-            keyExtractor={(item, index) => JSON.stringify(index)}
-            extraData={this.state}
+        {!collapse && (
+          <ActList
+            actList={actList}
+            parentFlatList={parentFlatList}
+            personIndex={personIndex}
+            person={person}
           />
-        </View>
+        )}
       </View>
     );
   }
