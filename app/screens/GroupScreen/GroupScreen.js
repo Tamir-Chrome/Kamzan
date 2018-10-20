@@ -8,6 +8,7 @@ import ActBox from '../../components/ActBox/ActBox';
 import InsertPersonRow from '../../components/InsertRow/InserPersonRow';
 import { mapKeys } from '../../util';
 import * as Actions from '../../actions';
+import EditPayedPrompt from '../../components/Modals/EditPayed';
 
 const uuidv4 = require('uuid/v4');
 const img = require('../../images/wooden-board.jpg');
@@ -73,6 +74,15 @@ class GroupScreen extends Component {
     }
   }
 
+  showPrompt(personIndex, personName) {
+    this.prompt.setModalVisible(true, personIndex, personName);
+  }
+
+  submitInput(value, sign, personIndex) {
+    const { editPayed } = this.props;
+    editPayed(personIndex, value * sign);
+  }
+
   render() {
     const { actList, personList } = this.props;
     return (
@@ -85,6 +95,14 @@ class GroupScreen extends Component {
           paddingTop: 8,
         }}
       >
+        <EditPayedPrompt
+          onRef={(ref) => {
+            this.prompt = ref;
+          }}
+          title="Edit payed value"
+          message="Hit the switch to remove from amount"
+          parentScreen={this}
+        />
         <InsertPersonRow parentFlatList={this} style={{ backgroundColor: '#e83a53' }} />
         <View style={{ flex: 0.7, marginTop: 12 }}>
           <FlatList

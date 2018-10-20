@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import InsertActRow from '../../components/InsertRow/InsertActRow';
 import ActFlatListItem from '../../components/FlatListItem/ActFlatListItem';
-import { mapToJson } from '../../util';
 import EditValuePrompt from '../../components/Modals/EditValue';
 import * as Actions from '../../actions';
 
@@ -33,64 +32,13 @@ class ActListScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      actList: new Map([]),
-    };
-    this.personList = new Map([]);
-    this.sharedItems = {};
-    // AsyncStorage.clear();
-  }
-
-  updateActList(newList) {
-    this.setState({ actList: newList });
-    AsyncStorage.setItem('actList', mapToJson(newList)).catch(e => console.error('ActListScreen.js:updateActList:', e.message));
+    this.state = {};
   }
 
   deleteFromList(index, id) {
     const { removeAct, actList } = this.props;
     const size = actList.length;
     removeAct(size - index - 1, id);
-  }
-
-  // only called if act name is change
-  deepReplaceAct(prevAct, newAct, newPrice) {
-    const { actList } = this.state;
-    // replace act from every person
-    this.personList.forEach((person) => {
-      const indexOfAct = person.acts.indexOf(prevAct);
-      if (indexOfAct !== -1) {
-        person.acts[indexOfAct] = newAct;
-      }
-    });
-
-    // get item from list
-    const item = actList.get(prevAct);
-
-    // replace act from sharedItems
-    if (item.isShared) {
-      this.sharedItems[newAct] = this.sharedItems[prevAct];
-      delete this.sharedItems[prevAct];
-    }
-    if (newPrice) {
-      if (item.isShared) {
-        this.sharedItems[newAct].price = newPrice;
-        item.price = Math.floor(newPrice / this.sharedItems[newAct].userCount);
-      } else {
-        item.price = newPrice;
-      }
-    }
-
-    // remove from actList
-    actList.set(newAct, item);
-    actList.delete(prevAct);
-
-    // update data
-    this.setState({ actList });
-    AsyncStorage.multiSet([
-      ['actList', mapToJson(actList)],
-      ['personList', mapToJson(this.personList)],
-      ['sharedItems', JSON.stringify(this.sharedItems)],
-    ]).catch(e => console.error('err', e.message));
   }
 
   addToList(price, name) {
@@ -110,29 +58,20 @@ class ActListScreen extends Component {
     changeShared(size - indexOfAct - 1);
   }
 
-  showPrompt(actName) {
-    this.prompt.setModalVisible(true, actName);
+  showPrompt(actName, indexOfAct) {
+    this.prompt.setModalVisible(true, actName, indexOfAct);
   }
 
-  submitInput(price, newName, name) {
-    const { actList } = this.state;
-    if (newName && !actList.has(newName) && name && actList.has(name)) {
-      this.deepReplaceAct(name, newName, price);
-    } else if (price && name) {
-      const item = actList.get(name);
-      // replace act from sharedItems
-      if (item.isShared) {
-        this.sharedItems[name].price = price;
-        item.price = Math.floor(price / this.sharedItems[name].userCount);
-      } else {
-        item.price = price;
-      }
-      this.setState({ actList });
-      AsyncStorage.multiSet([
-        ['actList', mapToJson(actList)],
-        ['sharedItems', JSON.stringify(this.sharedItems)],
-      ]).catch(e => console.error('err', e.message));
-    }
+  submitInput(newName, newPrice, indexOfAct) {
+    const { actList, editAct } = this.props;
+    const realIndex = actList.length - indexOfAct - 1;
+    const { name, price } = actList[realIndex][1];
+
+    editAct(
+      newName || name,
+      newPrice || price,
+      realIndex,
+    );
   }
 
   render() {

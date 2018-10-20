@@ -20,6 +20,13 @@ export const changeShared = indexOfAct => ({
   indexOfAct,
 });
 
+export const editAct = (newName, newPrice, indexOfAct) => ({
+  type: 'EDIT_ACT',
+  newName,
+  newPrice,
+  indexOfAct,
+});
+
 export const addPerson = (id, personName, payedAmount) => ({
   type: 'ADD_PERSON',
   id,
@@ -48,4 +55,10 @@ export const removePersonAct = (personIndex, actIndex, personActIndex) => ({
   personIndex,
   personActIndex,
   actIndex,
+});
+
+export const editPayed = (personIndex, value) => ({
+  type: 'EDIT_PAYED',
+  personIndex,
+  value,
 });

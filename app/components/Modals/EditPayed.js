@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
 import {
-  View, Text, Modal, TouchableOpacity, Platform, TextInput, StyleSheet,
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  Platform,
+  TextInput,
+  StyleSheet,
+  CheckBox,
 } from 'react-native';
 
-export default class EditValuePrompt extends Component {
+export default class EditPayedPrompt extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      price: '',
-      name: '',
+      value: '',
+      sign: 1,
+      personIndex: '',
       modalVisible: false,
-      actName: '',
-      indexOfAct: '',
     };
   }
 
@@ -27,17 +33,22 @@ export default class EditValuePrompt extends Component {
 
   onSubmit() {
     const { parentScreen } = this.props;
-    const { price, name, indexOfAct } = this.state;
+    const { value, sign, personIndex } = this.state;
     this.setModalVisible(false);
-    parentScreen.submitInput(name, price, indexOfAct);
+    parentScreen.submitInput(value, sign, personIndex);
   }
 
-  setModalVisible(visible, actName, indexOfAct) {
-    this.setState({ modalVisible: visible, actName, indexOfAct });
+  setModalVisible(visible, personIndex = '', personName = '') {
+    this.setState({
+      modalVisible: visible,
+      personIndex,
+      personName,
+      sign: 1,
+    });
   }
 
   render() {
-    const { modalVisible, actName } = this.state;
+    const { modalVisible, personName, sign } = this.state;
     const {
       textProps = null,
       modalStyleProps = {},
@@ -45,6 +56,7 @@ export default class EditValuePrompt extends Component {
       cancelText = 'Cancel',
       submitText = 'Submit',
       message,
+      title,
     } = this.props;
 
     return (
@@ -60,17 +72,41 @@ export default class EditValuePrompt extends Component {
           <View style={[styles.modal_container, { ...dialogStyleProps }]}>
             <View style={styles.modal_body}>
               <Text style={styles.title_modal}>
-                {actName}
+                {`${title} of ${personName}`}
               </Text>
-              <Text style={[message ? styles.message_modal : { height: 0 }]}>
-                {message}
-              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  marginTop: 10,
+                }}
+              >
+                <CheckBox
+                  value={sign === 1}
+                  onValueChange={() => {
+                    this.setState({ sign: sign === 1 ? -1 : 1 });
+                  }}
+                />
+                <Text>
+                  {'Add'}
+                </Text>
+              </View>
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
+                <CheckBox
+                  value={sign === -1}
+                  onValueChange={() => {
+                    this.setState({ sign: sign === 1 ? -1 : 1 });
+                  }}
+                />
+                <Text>
+                  {'Remove'}
+                </Text>
+              </View>
               <TextInput
                 style={styles.input_container}
-                autoCorrect={!(textProps && textProps.autoCorrect === false)}
-                autoCapitalize={
-                  textProps && textProps.autoCapitalize ? textProps.autoCapitalize : 'none'
-                }
                 clearButtonMode={
                   textProps && textProps.clearButtonMode ? textProps.clearButtonMode : 'never'
                 }
@@ -79,33 +115,10 @@ export default class EditValuePrompt extends Component {
                     ? textProps.clearTextOnFocus
                     : false
                 }
-                keyboardType={
-                  textProps && textProps.keyboardType ? textProps.keyboardType : 'default'
-                }
+                keyboardType="numeric"
                 underlineColorAndroid="transparent"
-                placeholder="price"
-                onChangeText={text => this.setState({ price: text })}
-              />
-              <TextInput
-                style={styles.input_container}
-                autoCorrect={!(textProps && textProps.autoCorrect === false)}
-                autoCapitalize={
-                  textProps && textProps.autoCapitalize ? textProps.autoCapitalize : 'none'
-                }
-                clearButtonMode={
-                  textProps && textProps.clearButtonMode ? textProps.clearButtonMode : 'never'
-                }
-                clearTextOnFocus={
-                  textProps && textProps.clearTextOnFocus === true
-                    ? textProps.clearTextOnFocus
-                    : false
-                }
-                keyboardType={
-                  textProps && textProps.keyboardType ? textProps.keyboardType : 'default'
-                }
-                underlineColorAndroid="transparent"
-                placeholder="act"
-                onChangeText={text => this.setState({ name: text })}
+                placeholder="amount to change"
+                onChangeText={text => this.setState({ value: text })}
               />
             </View>
             <View style={styles.btn_container}>
@@ -137,8 +150,6 @@ export default class EditValuePrompt extends Component {
     );
   }
 }
-
-module.exports = EditValuePrompt;
 
 const styles = StyleSheet.create({
   container: {

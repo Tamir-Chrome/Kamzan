@@ -7,6 +7,10 @@ const actList = (state = [], action) => {
     case 'REMOVE_ACT':
       newActList.splice(action.indexOfAct, 1);
       return newActList;
+    case 'EDIT_ACT':
+      newActList[action.indexOfAct][1].name = action.newName;
+      newActList[action.indexOfAct][1].price = action.newPrice;
+      return newActList;
     case 'ADD_ACTS':
       action.actsIndexes.forEach((actIndex) => {
         newActList[actIndex][1].users += 1;

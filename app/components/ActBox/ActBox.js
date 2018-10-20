@@ -39,18 +39,24 @@ export default class ActBox extends Component {
               parentFlatList.addAct(personIndex);
             }}
           >
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={{ marginLeft: 10, color: 'white' }}>
                 {person.name}
               </Text>
               <Text style={{ marginLeft: 10, color: 'white' }}>
                 {person.payed}
               </Text>
+              <Icon
+                name="edit"
+                type="MaterialIcons"
+                style={{ marginLeft: 10, color: 'white', fontSize: 19 }}
+                onPress={() => parentFlatList.showPrompt(personIndex, person.name)}
+              />
             </View>
           </TouchableOpacity>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
             <Icon
-              name="minus"
+              name={collapse ? 'plus' : 'minus'}
               type="EvilIcons"
               style={{ color: '#009B9F' }}
               onPress={() => {

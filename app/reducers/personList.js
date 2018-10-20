@@ -20,6 +20,11 @@ const personList = (state = [], action) => {
         person[1].acts = person[1].acts.filter(actId => actId !== action.actId);
       });
       return newPersonList;
+    case 'EDIT_PAYED':
+      newPersonList[action.personIndex][1].payed = JSON.stringify(
+        parseInt(newPersonList[action.personIndex][1].payed, 10) + action.value,
+      );
+      return newPersonList;
     default:
       return state;
   }
