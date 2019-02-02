@@ -1,10 +1,16 @@
-import { AppRegistry, I18nManager } from 'react-native';
+/**
+ * @format
+ * @lint-ignore-every XPLATJSCOPYRIGHT1
+ */
+
+import {AppRegistry} from 'react-native';
 import App from './App';
+import {name as appName} from './app.json';
 
 try {
-  I18nManager.allowRTL(false);
-} catch (e) {
-  console.log(e);
-}
+    I18nManager.allowRTL(false);
+  } catch (e) {
+    console.log(e);
+  }
 
-AppRegistry.registerComponent('Kamzan', () => App);
+AppRegistry.registerComponent(appName, () => App);

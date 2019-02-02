@@ -1,5 +1,11 @@
+/**
+ * @format
+ * @flow
+ * @lint-ignore-every XPLATJSCOPYRIGHT1
+ */
+
 import React from 'react';
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './app/store';
@@ -9,7 +15,7 @@ import ActListScreen from './app/screens/ActListScreen/ActListScreen';
 import GroupScreen from './app/screens/GroupScreen/GroupScreen';
 import TransferScreen from './app/screens/TransferScreen/TransferScreen';
 
-const TabNav = createMaterialBottomTabNavigator(
+const TabNav = createBottomTabNavigator(
   {
     Items: ActListScreen,
     Groups: GroupScreen,
@@ -25,10 +31,12 @@ const TabNav = createMaterialBottomTabNavigator(
   },
 );
 
+const TabNavigator = createAppContainer(TabNav);
+
 export const App = () => (
   <Provider store={store}>
     <PersistGate loading={<LoadingScreen />} persistor={persistor}>
-      <TabNav />
+      <TabNavigator />
     </PersistGate>
   </Provider>
 );
