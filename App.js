@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import { createMaterialTopTabNavigator, createAppContainer } from 'react-navigation';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './app/store';
@@ -15,19 +15,29 @@ import ActListScreen from './app/screens/ActListScreen/ActListScreen';
 import GroupScreen from './app/screens/GroupScreen/GroupScreen';
 import TransferScreen from './app/screens/TransferScreen/TransferScreen';
 
-const TabNav = createBottomTabNavigator(
+const TabNav = createMaterialTopTabNavigator(
   {
     Items: ActListScreen,
     Groups: GroupScreen,
     Transfers: TransferScreen,
   },
   {
-    shifting: true,
-    labeled: true,
     initialRouteName: 'Items',
     activeTintColor: 'white',
     inactiveTintColor: '#3e2465',
-    barStyle: { backgroundColor: '#607d8b' },
+    tabBarPosition: 'bottom',
+    lazy: true,
+    animationEnabled: true,
+    optimizationEnabled: true,
+    swipeEnabled: true,
+    tabBarOptions: {
+      style: { backgroundColor: '#ed8450', maxHeight: 60 },
+      indicatorStyle: { backgroundColor: '#2e3142' },
+      showIcon: true,
+      upperCaseLabel: false,
+      iconStyle: { paddingBottom: 0 },
+      labelStyle: { fontSize: 12 },
+    }
   },
 );
 

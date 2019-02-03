@@ -1,43 +1,56 @@
 import React, { Component } from 'react';
-import { View, TouchableWithoutFeedback } from 'react-native';
+import { View, TouchableWithoutFeedback, StyleSheet, Text, CheckBox } from 'react-native';
 import ActionSheet from 'react-native-actionsheet';
 import { Icon } from 'native-base';
-import Price from '../Price/Price';
 
 export default class ActFlatListItem extends Component {
   showActionSheet = () => {
     this.ActionSheet.show();
   };
 
+  
+
   render() {
     const {
-      id, actIndex, item, parentFlatList, bgColor,
+      id, actIndex, item, parent,
     } = this.props;
 
     return (
       <View
         style={{
           flex: 1,
+          height: 50,
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'center',
-          marginVertical: 3,
+          backgroundColor: '#2e3142',
         }}
       >
         <TouchableWithoutFeedback
-          onPress={() => parentFlatList.changeSharedItem(actIndex)}
-          onLongPress={() => parentFlatList.showPrompt(item.name, actIndex)}
+          onLongPress={() => parent.showPrompt(item.name, actIndex)}
         >
-          <View>
-            <Price price={item.price} act={item.name} bgColor={bgColor} />
+          <View style={styles.itemContainer}>
+            <Text style={{ flex: 0.5, color: 'white', marginLeft: 15, paddingRight: 22, fontWeight: 'bold' }}>
+              {item.name}
+            </Text>
+            <Text style={{ flex: 0.3, color: 'white', paddingLeft: 22, fontWeight: 'bold' }}>
+              {item.price}
+            </Text>
+            <CheckBox
+              style={{ flex: 0.1, paddingRight: 10 }}
+              value={item.isShared}
+              onValueChange={() => parent.changeSharedItem(actIndex)}
+            />
+            <View style={{ flex: 0.1, marginRight: 5 }}>
+              <Icon
+                name="minus"
+                type="EvilIcons"
+                style={{ fontSize: 32, color: '#ed8450' }}
+                onPress={this.showActionSheet}
+              />
+            </View>
           </View>
         </TouchableWithoutFeedback>
-        <Icon
-          name="close"
-          type="EvilIcons"
-          style={{ fontSize: 32, color: '#C11B0F' }}
-          onPress={this.showActionSheet}
-        />
+
         <ActionSheet
           ref={(ref) => {
             this.ActionSheet = ref;
@@ -49,7 +62,7 @@ export default class ActFlatListItem extends Component {
           onPress={(index) => {
             switch (index) {
               case 0:
-                parentFlatList.deleteFromList(actIndex, id);
+                parent.deleteFromList(actIndex, id);
                 break;
               default:
                 break;
@@ -62,3 +75,16 @@ export default class ActFlatListItem extends Component {
 }
 
 module.exports = ActFlatListItem;
+
+const styles = StyleSheet.create({
+  itemContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  }
+});
+
+/*
+
+        
+*/
