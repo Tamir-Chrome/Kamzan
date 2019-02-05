@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     FlatList, View, AsyncStorage, StyleSheet, Text,
   } from 'react-native';
-import InsertActRow from '../../components/InsertRow/InsertActRow';
+import InsertRow from '../../components/InsertRow/InsertRow';
 import ActFlatListItem from '../../components/FlatListItem/ActFlatListItem';
 import EditValuePrompt from '../../components/Modals/EditValue';
 import { Container, Content, Header, Icon } from 'native-base';
@@ -43,18 +43,9 @@ export default class ActListUI extends Component {
           </Text>
         </Header>
         <Content>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
-            }}
-            >
-          
-          <View style={{ flex: 1 }}>
-            <InsertActRow parent={parent} />
+        <View style={{ flex: 1 }}>
+            <InsertRow leftPlaceholder={'product name'} rightPlaceholder={'price'} addCB={parent.addToList}  />
           </View>
-        </View>
 
         <FlatList
           style={{ flex: 0.8 }}

@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { FlatList, View, ImageBackground } from 'react-native';
 import { Icon } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PersonFlatListItem from '../../components/FlatListItem/PersonFlatListItem';
-import ActBox from '../../components/ActBox/ActBox';
-import InsertPersonRow from '../../components/InsertRow/InserPersonRow';
-import { mapKeys } from '../../util';
+import GroupUI from './GroupUI';
+
 import * as Actions from '../../actions';
-import EditPayedPrompt from '../../components/Modals/EditPayed';
+import { mapKeys } from '../../util';
+
 
 const uuidv4 = require('uuid/v4');
 const img = require('../../images/wooden-board.jpg');
@@ -44,14 +42,14 @@ class GroupScreen extends Component {
     removePersonAct(personIndex, actIndex, personActIndex);
   };
 
-  addSelectedAct(actId, actIndex) {
+  addSelectedAct = (actId, actIndex) => {
     const { selectedActs, selectedActsIndexes } = this.state;
     selectedActs.push(actId);
     selectedActsIndexes.push(actIndex);
     this.setState({ selectedActs, selectedActsIndexes });
   }
 
-  removeFromPersonList(personIndex) {
+  removeFromPersonList = (personIndex) => {
     const { removePerson, actList, personList } = this.props;
 
     // convert the acts list of a person
@@ -65,7 +63,7 @@ class GroupScreen extends Component {
     removePerson(personIndex, actsIndex);
   }
 
-  addToPersonList(personName, payed) {
+  addToPersonList = (personName, payed) => {
     const { addPerson } = this.props;
     if (payed && personName) {
       // v4 - random uuid - statisticly will not fuck up in my life time
@@ -74,11 +72,11 @@ class GroupScreen extends Component {
     }
   }
 
-  showPrompt(personIndex, personName) {
+  showPrompt = (personIndex, personName) => {
     this.prompt.setModalVisible(true, personIndex, personName);
   }
 
-  submitInput(value, sign, personIndex) {
+  submitInput = (value, sign, personIndex) => {
     const { editPayed } = this.props;
     editPayed(personIndex, value * sign);
   }
@@ -86,68 +84,7 @@ class GroupScreen extends Component {
   render() {
     const { actList, personList } = this.props;
     return (
-      <ImageBackground
-        source={img}
-        style={{
-          flexDirection: 'column',
-          flex: 1,
-          justifyContent: 'flex-start',
-          paddingTop: 8,
-        }}
-      >
-        <EditPayedPrompt
-          onRef={(ref) => {
-            this.prompt = ref;
-          }}
-          title="Edit payed value"
-          message="Hit the switch to remove from amount"
-          parentScreen={this}
-        />
-        <InsertPersonRow parentFlatList={this} style={{ backgroundColor: '#e83a53' }} />
-        <View style={{ flex: 0.7, marginTop: 12 }}>
-          <FlatList
-            data={personList.slice().reverse()}
-            renderItem={({ item, index }) => (
-              <ActBox
-                id={item[0]}
-                person={item[1]}
-                personIndex={personList.length - index - 1}
-                actList={actList}
-                parentFlatList={this}
-              />
-            )}
-            keyExtractor={(item, index) => JSON.stringify(index)}
-            extraData={this.state}
-          />
-        </View>
-        <View style={{ flex: 0.2, marginTop: 4, borderTopWidth: 1 }}>
-          <FlatList
-            data={mapKeys(actList)}
-            horizontal={false}
-            numColumns={3}
-            renderItem={({ item, index }) => (
-              <View
-                style={{
-                  alignSelf: 'center',
-                  justifyContent: 'center',
-                  margin: 1,
-                  marginTop: 4,
-                }}
-              >
-                <PersonFlatListItem
-                  id={item}
-                  item={actList.get(item)}
-                  index={index}
-                  parentFlatList={this}
-                  bgColor={actList.get(item).isShared ? '#eeffff' : '#bbdefb'}
-                />
-              </View>
-            )}
-            keyExtractor={(item, index) => JSON.stringify(index)}
-            extraData={this.state}
-          />
-        </View>
-      </ImageBackground>
+      <GroupUI parent={this} actList={actList} personList={personList}/>
     );
   }
 }

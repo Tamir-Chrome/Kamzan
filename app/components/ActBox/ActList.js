@@ -10,34 +10,37 @@ export default class ActList extends Component {
 
   render() {
     const {
-      actList, person, parentFlatList, personIndex,
+      actList, person, parent, personIndex,
     } = this.props;
     return (
       <View
         style={{
-          height: 92,
-          backgroundColor: '#E0E0E0',
+          maxHeight: 92,
+          borderLeftWidth: 2,
+          borderRightWidth: 2,
+          borderBottomWidth: 2,
+          borderColor: '#2e3142',
           borderBottomEndRadius: 8,
           borderBottomStartRadius: 8,
         }}
       >
         <FlatList
-          style={{ marginLeft: 4, marginTop: 4 }}
           data={person.acts}
           horizontal={false}
           numColumns={3}
           renderItem={({ item, index }) => (
             <View
               style={{
-                alignItems: 'baseline',
-                justifyContent: 'center',
-                margin: 1,
+                alignItems: 'center',
+                justifyContent: 'space-around',
                 height: 32,
+                marginVertical: 6,
+                flex: 1
               }}
             >
               <TouchableOpacity
                 onPress={() => {
-                  parentFlatList.removeAct(personIndex, item, index);
+                  parent.removeAct(personIndex, item, index);
                 }}
               >
                 <Price
@@ -53,7 +56,7 @@ export default class ActList extends Component {
             </View>
           )}
           keyExtractor={(item, index) => JSON.stringify(index)}
-          extraData={this.state}
+          extraData={parent.state}
         />
       </View>
     );

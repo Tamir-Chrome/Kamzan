@@ -9,12 +9,12 @@ export default class InputBox extends Component {
   }
 
   render() {
-    const { flex, placeholder, parent, type } = this.props;
+    const { flex, placeholder, parent, type, keyboardType } = this.props;
     return (
       <View style={[styles.container, {flex: flex}]}>
         <Input
-          maxLength={32}
-          keyboardType="default"
+          maxLength={24}
+          keyboardType={keyboardType}
           placeholderTextColor="#d0d0d0"
           placeholder={placeholder}
           onChangeText={text => parent.setState({ [type]: text })}
@@ -26,8 +26,10 @@ export default class InputBox extends Component {
 
 const styles = StyleSheet.create({
   container: {
+      flexDirection: 'row',
       justifyContent: 'center',
       alignSelf: 'center',
+      alignItems: 'center',
       backgroundColor: '#f4f4f4',
       height: 40,
       borderRadius: 7,

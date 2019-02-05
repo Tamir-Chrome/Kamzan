@@ -1,9 +1,9 @@
 /* @flow */
 import React, { Component } from 'react';
-import { FlatList, ImageBackground } from 'react-native';
+import TransferUI from './TransferUI';
 import { Icon } from 'native-base';
 import { connect } from 'react-redux';
-import TransferItem from '../../components/FlatListItem/TransferItem';
+
 
 const img = require('../../images/wooden-board.jpg');
 
@@ -106,20 +106,7 @@ class TransferScreen extends Component {
   render() {
     const { transfers } = this.state;
     return (
-      <ImageBackground
-        source={img}
-        style={{ flexDirection: 'column', flex: 1, justifyContent: 'flex-start' }}
-      >
-        <FlatList
-          style={{ marginTop: 7 }}
-          data={transfers}
-          renderItem={({ item }) => (
-            <TransferItem owerName={item[0]} amount={item[2]} payerName={item[1]} />
-          )}
-          keyExtractor={(item, index) => JSON.stringify(index)}
-          extraData={this.state}
-        />
-      </ImageBackground>
+      <TransferUI transfers={transfers} />
     );
   }
 }

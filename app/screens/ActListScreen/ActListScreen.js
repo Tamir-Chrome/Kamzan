@@ -30,13 +30,13 @@ class ActListScreen extends Component {
     this.state = {};
   }
 
-  deleteFromList(index, id) {
+  deleteFromList = (index, id) => {
     const { removeAct, actList } = this.props;
     const size = actList.length;
     removeAct(size - index - 1, id);
   }
 
-  addToList(price, name) {
+  addToList = (name, price) => {
     if (price && name) {
       const { addAct } = this.props;
       // v4 - random uuid - statisticly will not fuck up in my life time
@@ -46,18 +46,18 @@ class ActListScreen extends Component {
     }
   }
 
-  changeSharedItem(indexOfAct) {
+  changeSharedItem = (indexOfAct) => {
     // check if item is used TODO: ADD ALERT
     const { changeShared, actList } = this.props;
     const size = actList.length;
     changeShared(size - indexOfAct - 1);
   }
 
-  showPrompt(actName, indexOfAct) {
+  showPrompt = (actName, indexOfAct) => {
     this.prompt.setModalVisible(true, actName, indexOfAct);
   }
 
-  submitInput(newName, newPrice, indexOfAct) {
+  submitInput = (newName, newPrice, indexOfAct) => {
     const { actList, editAct } = this.props;
     const realIndex = actList.length - indexOfAct - 1;
     const { name, price } = actList[realIndex][1];
